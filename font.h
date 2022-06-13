@@ -157,14 +157,11 @@ float const rubberx = 0, rubbery = 36;
 float lastx = rubberx;
 float lasty = rubbery;
 //运笔至坐标位�?
-int readl(int num, int flag, int place) //读取数字库的坐标
+void readl(int num, int flag, int place) //读取数字库的坐标
 {
     int i, j;
     point.Tx = LC_Num0[num][flag * 2] + (place - 1) * 17.5;
     point.Ty = LC_Num0[num][flag * 2 + 1];
-    if (LC_Num0[num][flag * 2] == 0)
-        return 0;
-    return 1;
 }
 float return_angle(float a, float b, float c) //计算a与c的夹角并返回夹角的�?
 {
@@ -182,9 +179,9 @@ void set_XY(float Tx, float Ty) //根据坐标返回给angle结构体两个角�
     c = sqrt(dx * dx + dy * dy);  //与左舵机的距�?
     a1 = atan2(dy, dx);           //返回以弧度表示的 y/x 的反正切得到角度
     a2 = return_angle(L1, L2, c); //机械臂一与xo1的夹�?
-    change_angle.a1=(a1+a2)/PI*180-angle.angle1;
+    change_angle.a1=(a1+a2)/PI*180-angle.angle1;//若数值为正，则是顺时针转
     angle.angle1=(a1+a2)/PI*180;
-    ang1=ang1-change_angle.a1;
+    ang1=ang1-change_angle.a1;//舵机的角度
     
     a2 = return_angle(L2, L1, c);
     Hx = Tx + L3 * cos((a1 - a2 + 0.45937) + PI);
@@ -220,7 +217,7 @@ void drawTo(float pX, float pY) //到达指定坐标
     if (c < 1)
         c = 1;
 
-    for (i = 0; i <= c; i+=5)
+    for (i = 0; i <= c; i+=10)//舵机转动角度大化小
     {
         // draw line point by point
         set_XY(lastx + (i * dx / c), lasty + (i * dy / c));
